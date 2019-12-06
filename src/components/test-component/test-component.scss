@@ -1,0 +1,22 @@
+
+body {
+    font-family: 'Microsoft YaHei';
+}
+
+.result {
+
+    padding: 5px;
+
+    &.complete {
+        color: green;
+    }
+    
+    &.error {
+        color: red;
+    }
+    
+    &.next {
+        color: blue;
+    }
+}
+

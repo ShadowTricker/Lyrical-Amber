@@ -1,0 +1,17 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel index.html"
+  },
+  "devDependencies": {
+    "less": "^3.9.0",
+    "sass": "^1.17.2",
+    "typescript": "^3.3.3333"
+  },
+  "dependencies": {
+    "rxjs": "^6.5.3"
+  }
+}
