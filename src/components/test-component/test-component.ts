@@ -17,6 +17,10 @@ function createElement (
     properties: PropertiesObject
 ): any {
     const { children } = properties;
+    const propertyKeys = Object.keys(properties).filter((key: string) => key !== 'children');
+    console.log(propertyKeys);
+
+    // render element
     const elem: HTMLElement = document.createElement(elementName);
     if (children.length > 0) {
         children.forEach((child: string | HTMLElement) => {
@@ -28,6 +32,18 @@ function createElement (
             }
         });
     }
+
+    // add properties and event to element
+    propertyKeys.forEach((key: string) => {
+        if (key === 'className') {
+            elem.classList.add(...properties.className);
+        }
+        if (key === 'onClick') {
+            console.log(properties[key]);
+            properties[key]('test');
+            elem.onclick = properties[key];
+        }
+    });
 
     return elem;
 }
