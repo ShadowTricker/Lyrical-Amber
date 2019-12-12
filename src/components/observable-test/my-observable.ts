@@ -10,18 +10,20 @@ interface Subscriber {
 
 class MyObservable {
 
-    public subscriber: Subscriber;
+    private _subscribe: Subscriber;
 
-    static create(subscriber: Subscriber): MyObservable {
-        return new MyObservable(subscriber);
-    }
-
-    constructor(subscriber: Subscriber) {
-        this.subscriber = subscriber;
+    constructor(subscribe?: Subscriber) {
+        if (subscribe) {
+            this._subscribe = subscribe;
+        }
     }
 
     public subscribe(observer: Observer): void {
-        this.subscriber(observer);
+        this._subscribe(observer);
+    } 
+
+    static create(subscriber?: Subscriber): MyObservable {
+        return new MyObservable(subscriber);
     }
 }
 

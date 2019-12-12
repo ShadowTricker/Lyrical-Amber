@@ -1,5 +1,6 @@
 
-import { MyObservable, Observer, Subscriber } from '../components/observable-test/observable-test';
+import { MyObservable, Observer, Subscriber } from '../components/observable-test/my-observable';
+import { MySubject } from '../components/observable-test/my-subject';
 
 const myObservable = MyObservable.create(subscriber => {
     subscriber.next('next1');
@@ -10,13 +11,42 @@ const myObservable = MyObservable.create(subscriber => {
 });
 
 myObservable.subscribe({
-    next: (res: any) => {
+    next(res) {
         console.log(res);
     },
-    error: (error: any) => {
-        console.log(error);
+    error(err) {
+        console.log(err);
     },
-    complete: (res: any) => {
-        console.log(res);
+    complete() {
+        console.log('complete');
     }
 });
+
+/* const mySubject = new MySubject();
+
+
+mySubject.subscribe({
+    next: (res) => {
+        console.log(`A: ${res}`);
+    },
+    error: (error) => {
+        console.log(`A: ${error}`);
+    },
+    complete: () => {
+        console.log(`A: complete`);
+    }
+});
+
+mySubject.subscribe({
+    next: (res) => {
+        console.log(`B: ${res}`);
+    },
+    error: (error) => {
+        console.log(`B: ${error}`);
+    },
+    complete: () => {
+        console.log(`B: complete`);
+    }
+});
+
+myObservable.subscribe(mySubject); */

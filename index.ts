@@ -3,7 +3,8 @@
 import './index.scss';
 
 // common libs list
-import { Observable, interval, Subject, of } from 'rxjs';
+import { Observable, interval, Subject, of, asyncScheduler } from 'rxjs';
+import { observeOn, first, map } from 'rxjs/operators';
 
 // libs list created by self
 import { addDOM, createElement } from './src/components/test-component/test-component';
@@ -35,7 +36,7 @@ const div = createElement('div', {
 
 addDOM(rootDOM, div); */
 
-const subject = new Subject<number>();
+/* const subject = new Subject<number>();
 const observable = of(1, 2, 4);
 
 subject.subscribe((res) => {
@@ -47,6 +48,13 @@ observable.subscribe(subject);
 
 subject.subscribe((res) => {
     console.log(`B: ${res}`);
+}); */
+
+of(1, 2, 3).pipe(
+    first(),
+    map(x => x * 2),
+).subscribe(v => {
+    console.log(v);
 });
 
 

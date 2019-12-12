@@ -14,6 +14,9 @@ const oldValue = {
     },
     test13: {
         test14: 145
+    },
+    test15: {
+        test16: undefined
     }
 };
 
@@ -33,6 +36,9 @@ const newValue = {
     },
     test13: {
         test14: 144
+    },
+    test15: {
+        test16: undefined
     }
 };
 
@@ -83,6 +89,9 @@ const diffFlat = (oldValue: { [key: string]: any }, newValue: { [key: string]: a
 
         // 如果有值为 undefined，则直接给对应的 key 赋值
         if (currentValue === undefined || preValue === undefined || currentValue === null || preValue === null) {
+            if (currentValue === undefined && preValue === undefined) {
+                return;
+            }
             target[key] = diffFlat(preValue, currentValue, [ ...parents, key], target);
         }
 
@@ -105,19 +114,63 @@ const diffFlat = (oldValue: { [key: string]: any }, newValue: { [key: string]: a
     return target;
 };
 
-const diffData = diffFlat(oldValue, newValue);
-console.log(diffData);
-const filtData = {};
-Object.keys(diffData).forEach(key => {
-    /* const condition1 = typeof diffData[key].preValue !== 'object'&& typeof diffData[key].currentValue !== 'object';
-    const condition2 = diffData[key].preValue === null || diffData[key].currentValue === null; */
-    const condition1 = (typeof diffData[key].preValue === 'object' && diffData[key].preValue !== null)
-        || (typeof diffData[key].currentValue === 'object' && diffData[key].currentValue !== null);
-    const condition2 = diffData[key].preValue === null || diffData[key].currentValue == null;
+const testData1 = {
+    code: "P0002",
+    name: "",
+    value: {
+        butaitatemono: false,
+        butaitatenaisyosei: false,
+        haisuisyuyo: true,
+        hukaikingaku: undefined,
+        hukaisyuyo: true,
+        kasaikingaku: undefined,
+        kasaisyuyo: true,
+        kasaitatemono: false,
+        kasaitatenaisyosei: false,
+        kurumasyuyo: false,
+        sinsuikingaku: "",
+        sojyousyuyo: true,
+        sonotatategai: false,
+        sonotatategaisyosei: false,
+        sonotatatemono: false,
+        sonotatatenaisyosei: false,
+        sonotayusou: false,
+        tenkitatemono: false,
+        tenkitatenaisyosei: false,
+        tounantatemono: false,
+        tounantatenaisyosei: false,
+    },
+};
 
-    if (condition1) {
-        // filtData[key] = diffData[key];
-        Reflect.deleteProperty(diffData, key);
-    }
-});
+const testData2 = {
+    code: "P0002",
+    name: "",
+    value: {
+        butaitatemono: false,
+        butaitatenaisyosei: false,
+        haisuisyuyo: true,
+        hukaikingaku: undefined,
+        hukaisyuyo: true,
+        kasaikingaku: undefined,
+        kasaisyuyo: true,
+        kasaitatemono: false,
+        kasaitatenaisyosei: false,
+        kurumasyuyo: false,
+        sinsuikingaku: "",
+        sojyousyuyo: true,
+        sonotatategai: false,
+        sonotatategaisyosei: false,
+        sonotatatemono: false,
+        sonotatatenaisyosei: false,
+        sonotayusou: false,
+        tenkitatemono: false,
+        tenkitatenaisyosei: false,
+        tounantatemono: false,
+        tounantatenaisyosei: false,
+    },
+};
+
+const diffData = diffFlat(testData1, testData2);
 console.log(diffData);
+/* const diffData = diffFlat(oldValue, newValue);
+console.log(diffData); */
