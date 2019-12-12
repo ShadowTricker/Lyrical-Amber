@@ -114,61 +114,7 @@ const diffFlat = (oldValue: { [key: string]: any }, newValue: { [key: string]: a
     return target;
 };
 
-const testData1 = {
-    code: "P0002",
-    name: "",
-    value: {
-        butaitatemono: false,
-        butaitatenaisyosei: false,
-        haisuisyuyo: true,
-        hukaikingaku: undefined,
-        hukaisyuyo: true,
-        kasaikingaku: undefined,
-        kasaisyuyo: true,
-        kasaitatemono: false,
-        kasaitatenaisyosei: false,
-        kurumasyuyo: false,
-        sinsuikingaku: "",
-        sojyousyuyo: true,
-        sonotatategai: false,
-        sonotatategaisyosei: false,
-        sonotatatemono: false,
-        sonotatatenaisyosei: false,
-        sonotayusou: false,
-        tenkitatemono: false,
-        tenkitatenaisyosei: false,
-        tounantatemono: false,
-        tounantatenaisyosei: false,
-    },
-};
 
-const testData2 = {
-    code: "P0002",
-    name: "",
-    value: {
-        butaitatemono: false,
-        butaitatenaisyosei: false,
-        haisuisyuyo: true,
-        hukaikingaku: undefined,
-        hukaisyuyo: true,
-        kasaikingaku: undefined,
-        kasaisyuyo: true,
-        kasaitatemono: false,
-        kasaitatenaisyosei: false,
-        kurumasyuyo: false,
-        sinsuikingaku: "",
-        sojyousyuyo: true,
-        sonotatategai: false,
-        sonotatategaisyosei: false,
-        sonotatatemono: false,
-        sonotatatenaisyosei: false,
-        sonotayusou: false,
-        tenkitatemono: false,
-        tenkitatenaisyosei: false,
-        tounantatemono: false,
-        tounantatenaisyosei: false,
-    },
-};
 
 const diffData = diffFlat(testData1, testData2);
 console.log(diffData);
