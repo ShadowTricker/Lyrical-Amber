@@ -12,6 +12,15 @@ const preValue = {
         prop11: {
             prop12: 456
         }
+    },
+    prop13: {
+        prop14: 123,
+        prop15: {
+            prop16: 123,
+            prop17: {
+                prop18: 123
+            }
+        }
     }
 };
 
@@ -29,10 +38,19 @@ const curValue = {
         prop11: {
             prop12: 789
         }
+    },
+    prop13: {
+        prop14: 123,
+        prop15: {
+            prop16: 234,
+            prop17: {
+                prop18: [1, 3, 4]
+            }
+        }
     }
 };
 
-const diffNew = (preValue, curValue, target: any = {}) => {
+const diffNew = (preValue, curValue, container: any = {}) => {
 
     // get the two elements type
     const preType = getType(preValue);
@@ -40,19 +58,19 @@ const diffNew = (preValue, curValue, target: any = {}) => {
     const mergeType = preType === curType ? preType : null;
 
     if (!mergeType) {
-        return { preValue, curValue, isEqual: false, isEnd: true };
+        return { preValue, curValue, isEnd: true, isEqual: false };
     }
 
     if (mergeType !== 'symbol' && mergeType !== 'object' && mergeType !== 'function') {
         return JSON.stringify(preValue) === JSON.stringify(curValue)
-            ? { isEqual: false, isEnd: true }
-            : { preValue, curValue, isEqual: false, isEnd: true };
+            ? { isEnd: true, isEqual: true }
+            : { preValue, curValue, isEnd: true, isEqual: false };
     }
 
     if (mergeType === 'symbol' || mergeType === 'function') {
         return preValue === curValue
-            ? { isEqual: false, isEnd: true }
-            : { preValue, curValue, isEqual: false, isEnd: true };
+            ? { isEnd: true, isEqual: true }
+            : { preValue, curValue, isEnd: true, isEqual: false };
     }
 
     if (mergeType === 'object') {
@@ -62,18 +80,18 @@ const diffNew = (preValue, curValue, target: any = {}) => {
             ...Object.keys(preValue ? preValue : {}),
             ...Object.keys(curValue ? curValue : {})
         ]);
-
         if (keys.size > 0) {
             keys.forEach(key => {
-                if (preValue[key] !== undefined || curValue[key] !== undefined) {
-                    
+                const { isEqual, isEnd } = diffNew(preValue[key], curValue[key], container);
+                if (isEnd && !isEqual) {
+                    container[key] = diffNew(preValue[key], curValue[key], container);
+                } else if (!isEnd) {
+                    diffNew(preValue[key], curValue[key], container);
                 }
-
             });
         }
+        return container;
     }
-
-    return target;
 };
 
 function getType(value) {
@@ -121,9 +139,9 @@ const testData2 = {
     code: "P0003",
     name: "",
     value: {
-        butaitatemono: false,
+        butaitatemono: true,
         butaitatenaisyosei: false,
-        haisuisyuyo: true,
+        haisuisyuyo: false,
         hukaikingaku: undefined,
         hukaisyuyo: true,
         kasaikingaku: undefined,
@@ -145,36 +163,6 @@ const testData2 = {
     },
 };
 
-console.log(diffNew(testData1, testData2));
-
-function diffTest(obj1, obj2, target = {}) {
-    const keys = new Set([
-        ...Object.keys(obj1 ? obj1 : {}),
-        ...Object.keys(obj2 ? obj2 : {})
-    ]);
-
-    keys.forEach(key => {
-        if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
-            target[key] = diffTest(obj1[key], obj2[key], target[key]);
-        } else {
-            target = { pre: obj1[key], cur: obj2[key] };
-        }
-    });
-
-    return target;
-}
-
-const obj1 = {
-    test1: {
-        test2: 3
-    }
-};
-
-const obj2 = {
-    test1: {
-        test2: 4
-    }
-};
 
 
-console.log(diffTest(obj1, obj2));
+console.log(diffNew(preValue, curValue));
