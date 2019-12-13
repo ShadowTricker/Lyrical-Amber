@@ -50,7 +50,7 @@ const curValue = {
     }
 };
 
-const diffNew = (preValue, curValue, container: any = {}) => {
+const diffNew = (preValue, curValue, container: any = {}, parents = []) => {
 
     // get the two elements type
     const preType = getType(preValue);
@@ -58,19 +58,19 @@ const diffNew = (preValue, curValue, container: any = {}) => {
     const mergeType = preType === curType ? preType : null;
 
     if (!mergeType) {
-        return { preValue, curValue, isEnd: true, isEqual: false };
+        return { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) };
     }
 
     if (mergeType !== 'symbol' && mergeType !== 'object' && mergeType !== 'function') {
         return JSON.stringify(preValue) === JSON.stringify(curValue)
-            ? { isEnd: true, isEqual: true }
-            : { preValue, curValue, isEnd: true, isEqual: false };
+            ? {}
+            : { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) };
     }
 
     if (mergeType === 'symbol' || mergeType === 'function') {
         return preValue === curValue
-            ? { isEnd: true, isEqual: true }
-            : { preValue, curValue, isEnd: true, isEqual: false };
+            ? {}
+            : { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) };
     }
 
     if (mergeType === 'object') {
@@ -84,9 +84,9 @@ const diffNew = (preValue, curValue, container: any = {}) => {
             keys.forEach(key => {
                 const { isEqual, isEnd } = diffNew(preValue[key], curValue[key], container);
                 if (isEnd && !isEqual) {
-                    container[key] = diffNew(preValue[key], curValue[key], container);
+                    container[key] = diffNew(preValue[key], curValue[key], container, [ ...parents, key ]);
                 } else if (!isEnd) {
-                    diffNew(preValue[key], curValue[key], container);
+                    diffNew(preValue[key], curValue[key], container, [ ...parents, key ] );
                 }
             });
         }
@@ -137,7 +137,7 @@ const testData1 = {
 
 const testData2 = {
     code: "P0003",
-    name: "",
+    name: "12",
     value: {
         butaitatemono: true,
         butaitatenaisyosei: false,
@@ -165,4 +165,13 @@ const testData2 = {
 
 
 
-console.log(diffNew(preValue, curValue));
+console.log(
+    diffNew(
+        {
+            test: function () {}
+        },
+        {
+            test: function () {}
+        }
+    )
+);
