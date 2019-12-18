@@ -50,7 +50,7 @@ const curValue = {
     }
 };
 
-const diffNew = (preValue, curValue, container: any = {}, parents = []) => {
+const diffNew = (preValue, curValue, isRoot: boolean, container: any = {}, parents = []) => {
 
     // get the two elements type
     const preType = getType(preValue);
@@ -61,7 +61,7 @@ const diffNew = (preValue, curValue, container: any = {}, parents = []) => {
         return { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) };
     }
 
-    if (mergeType !== 'symbol' && mergeType !== 'object' && mergeType !== 'function') {
+    if (mergeType !== 'symbol' && mergeType !== 'object' && mergeType !== 'function' && mergeType !== 'array') {
         return JSON.stringify(preValue) === JSON.stringify(curValue)
             ? {}
             : { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) };
@@ -73,7 +73,23 @@ const diffNew = (preValue, curValue, container: any = {}, parents = []) => {
             : { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) };
     }
 
-    if (mergeType === 'object') {
+    /* if (mergeType === 'array') {
+        curValue.forEach((current, i) => {
+            if (isRoot) {
+                container = {
+                    ...container,
+                    ...JSON.stringify(preValue) === JSON.stringify(curValue)
+                        ? {}
+                        : { preValue, curValue, isEnd: true, isEqual: false, parents: parents.slice(0, -1) }
+                }
+            } else {
+                diffNew(preValue[i], current, false, container, [ ...parents, i ]);
+            }
+        });
+        return container;
+    } */
+
+    if (mergeType === 'object' || mergeType === 'array') {
 
         // get total keys about the two elements, and delete the repeat keys.
         const keys = new Set([
@@ -82,11 +98,11 @@ const diffNew = (preValue, curValue, container: any = {}, parents = []) => {
         ]);
         if (keys.size > 0) {
             keys.forEach(key => {
-                const { isEqual, isEnd } = diffNew(preValue[key], curValue[key], container);
+                const { isEqual, isEnd } = diffNew(preValue[key], curValue[key], false, container);
                 if (isEnd && !isEqual) {
-                    container[key] = diffNew(preValue[key], curValue[key], container, [ ...parents, key ]);
+                    container[key] = diffNew(preValue[key], curValue[key], false, container, [ ...parents, key ]);
                 } else if (!isEnd) {
-                    diffNew(preValue[key], curValue[key], container, [ ...parents, key ] );
+                    diffNew(preValue[key], curValue[key], false, container, [ ...parents, key ] );
                 }
             });
         }
@@ -107,71 +123,28 @@ function getType(value) {
     }
 }
 
-const testData1 = {
-    code: "P0002",
-    name: "",
-    value: {
-        butaitatemono: false,
-        butaitatenaisyosei: false,
-        haisuisyuyo: true,
-        hukaikingaku: undefined,
-        hukaisyuyo: true,
-        kasaikingaku: undefined,
-        kasaisyuyo: true,
-        kasaitatemono: false,
-        kasaitatenaisyosei: false,
-        kurumasyuyo: false,
-        sinsuikingaku: "",
-        sojyousyuyo: true,
-        sonotatategai: false,
-        sonotatategaisyosei: false,
-        sonotatatemono: false,
-        sonotatatenaisyosei: false,
-        sonotayusou: false,
-        tenkitatemono: false,
-        tenkitatenaisyosei: false,
-        tounantatemono: false,
-        tounantatenaisyosei: false,
-    },
-};
-
-const testData2 = {
-    code: "P0003",
-    name: "12",
-    value: {
-        butaitatemono: true,
-        butaitatenaisyosei: false,
-        haisuisyuyo: false,
-        hukaikingaku: undefined,
-        hukaisyuyo: true,
-        kasaikingaku: undefined,
-        kasaisyuyo: true,
-        kasaitatemono: false,
-        kasaitatenaisyosei: false,
-        kurumasyuyo: false,
-        sinsuikingaku: "",
-        sojyousyuyo: true,
-        sonotatategai: false,
-        sonotatategaisyosei: false,
-        sonotatatemono: false,
-        sonotatatenaisyosei: false,
-        sonotayusou: false,
-        tenkitatemono: false,
-        tenkitatenaisyosei: false,
-        tounantatemono: false,
-        tounantatenaisyosei: false,
-    },
-};
-
-
+console.log(
+    diffNew(
+        { 
+            super: [
+                { sub: 1 },
+                { sub: 2 },
+            ]
+        },
+        {
+            super: [
+                { sub: 2 },
+                { sub: 1 },
+            ]
+        },
+        true
+    )
+);
 
 console.log(
     diffNew(
-        {
-            test: function () {}
-        },
-        {
-            test: function () {}
-        }
+        [1, 2, 3],
+        [1, 2, 4],
+        true
     )
 );
