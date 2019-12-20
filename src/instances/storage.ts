@@ -9,17 +9,24 @@ export class StorageService {
 
   // local storage area
   public getLocal(key: string): any {
-    return localStorage.getItem(key);
+    console.log(localStorage.getItem(key));
+    return JSON.parse(localStorage.getItem(key));
   }
 
   public setLocal(key: string, value: any): void {
-    if (value !== null && typeof value === 'object') {
-      value = JSON.stringify(value);
-    }
     if (value === undefined || value === null) {
       this.deleteLocal(key);
       return;
     }
+
+    if (typeof value === 'string') {
+      value = `"${value}"`;
+    }
+
+    if (typeof value === 'object') {
+      value = JSON.stringify(value);
+    }
+
     localStorage.setItem(key, value);
   }
 
@@ -32,19 +39,22 @@ export class StorageService {
   }
 
   // session storage area
-  public getSession(key: string): any {
-    return sessionStorage.getItem(key);
+  public getSession<T>(key: string): T {
+    return JSON.parse(sessionStorage.getItem(key)) as T;
   }
 
   public setSession(key: string, value: any): void {
-    if (value !== null && typeof value === 'object') {
-      value = JSON.stringify(value);
-    }
-
     if (value === undefined || value === null) {
       this.deleteSession(key);
-
       return;
+    }
+
+    if (typeof value === 'string') {
+      value = `"${value}"`;
+    }
+
+    if (typeof value === 'object') {
+      value = JSON.stringify(value);
     }
 
     sessionStorage.setItem(key, value);
